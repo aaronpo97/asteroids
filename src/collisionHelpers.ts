@@ -1,4 +1,4 @@
-import { Vector } from './classes';
+import { Vector } from './types';
 
 export function circleCollision(
   circle1: { position: Vector; radius: number },
@@ -17,12 +17,7 @@ export function circleCollision(
 
   return false;
 }
-export function isPointOnLineSegment(
-  x: number,
-  y: number,
-  start: Vector,
-  end: Vector,
-) {
+export function isPointOnLineSegment(x: number, y: number, start: Vector, end: Vector) {
   return (
     x >= Math.min(start.x, end.x) &&
     x <= Math.max(start.x, end.x) &&
@@ -47,8 +42,7 @@ export function circleTriangleCollision(
     const length = Math.sqrt(dx * dx + dy * dy);
 
     const dot =
-      ((circle.position.x - start.x) * dx + (circle.position.y - start.y) * dy) /
-      length ** 2;
+      ((circle.position.x - start.x) * dx + (circle.position.y - start.y) * dy) / length ** 2;
 
     let closestX = start.x + dot * dx;
     let closestY = start.y + dot * dy;

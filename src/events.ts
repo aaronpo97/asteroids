@@ -1,5 +1,8 @@
-import { Projectile, type GameState, type Player, Vector } from './classes';
+import GameState from './classes/GameState';
+import Player from './classes/Player';
+import Projectile from './classes/Projectile';
 import { PROJECTILE_SPEED } from './constants';
+import { Vector } from './types';
 
 interface HandleKeyDownArgs {
   event: KeyboardEvent;

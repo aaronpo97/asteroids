@@ -1,7 +1,9 @@
-import { circleTriangleCollision, circleCollision } from './helpers';
-import { Player, Asteroid, Vector, GameState } from './classes';
-import { SPEED, FRICTION, ROTATIONAL_SPEED } from './constants';
+import GameState from './classes/GameState';
+import Player from './classes/Player';
+import { circleTriangleCollision, circleCollision } from './collisionHelpers';
+import { ASTEROID_SPAWN_INTERVAL, SPEED, FRICTION, ROTATIONAL_SPEED } from './constants';
 import { handleKeyDown, handleKeyUp } from './events';
+import { spawnAsteroid } from './spawnHelpers';
 
 const canvas = document.querySelector<HTMLCanvasElement>('#game-container')!;
 const c = canvas.getContext('2d')!;
@@ -20,47 +22,10 @@ const player = new Player({
 
 const state = new GameState();
 
-const intervalId = window.setInterval(() => {
-  const index = Math.floor(Math.random() * 4);
-
-  const position: Vector = { x: 0, y: 0 };
-  const velocity: Vector = { x: 0, y: 0 };
-
-  const radius = 50 * Math.random() + 10;
-
-  switch (index) {
-    case 0: // left side of the screen
-      position.x = 0 - radius;
-      position.y = Math.random() * canvas.height;
-      velocity.x = 1;
-      velocity.y = 0;
-      break;
-    case 1: // bottom side of the screen
-      position.x = Math.random() * canvas.width;
-      position.y = canvas.height + radius;
-      velocity.x = 0;
-      velocity.y = -1;
-      break;
-    case 2: // right side of the screen
-      position.x = canvas.width + radius;
-      position.y = Math.random() * canvas.height;
-      velocity.x = -1;
-      velocity.y = 0;
-
-      break;
-    case 3: // top side of the screen
-      position.x = Math.random() * canvas.width;
-      position.y = 0 - radius;
-      velocity.x = 0;
-      velocity.y = 1;
-      break;
-    default:
-      break;
-  }
-
-  const asteroid = new Asteroid({ c, position, velocity, radius });
-  state.addAsteroid(asteroid);
-}, 3000);
+const intervalId = window.setInterval(
+  () => spawnAsteroid({ canvas, c, state }),
+  ASTEROID_SPAWN_INTERVAL,
+);
 
 function animate() {
   const animationId = window.requestAnimationFrame(animate);
