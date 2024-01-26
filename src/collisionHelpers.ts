@@ -1,9 +1,6 @@
-import { Vector } from './types';
+import { CircularGameObject, Vector } from './types';
 
-export function circleCollision(
-  circle1: { position: Vector; radius: number },
-  circle2: { position: Vector; radius: number },
-) {
+export const circleCollision = (circle1: CircularGameObject, circle2: CircularGameObject) => {
   const xDiff = circle2.position.x - circle1.position.x;
   const yDiff = circle2.position.y - circle1.position.y;
 
@@ -16,22 +13,25 @@ export function circleCollision(
   }
 
   return false;
-}
-export function isPointOnLineSegment(x: number, y: number, start: Vector, end: Vector) {
+};
+export const isPointOnLineSegment = ({
+  point,
+  line,
+}: {
+  point: Vector;
+  line: { start: Vector; end: Vector };
+}) => {
   return (
-    x >= Math.min(start.x, end.x) &&
-    x <= Math.max(start.x, end.x) &&
-    y >= Math.min(start.y, end.y) &&
-    y <= Math.max(start.y, end.y)
+    point.x >= Math.min(line.start.x, line.end.x) &&
+    point.x <= Math.max(line.start.x, line.end.x) &&
+    point.y >= Math.min(line.start.y, line.end.y) &&
+    point.y <= Math.max(line.start.y, line.end.y)
   );
-}
-export function circleTriangleCollision(
-  circle: {
-    position: Vector;
-    radius: number;
-  },
+};
+export const circleTriangleCollision = (
+  circle: { position: Vector; radius: number },
   triangle: Vector[],
-) {
+) => {
   // Check if the circle is colliding with any of the triangle's edges
   for (let i = 0; i < 3; i += 1) {
     const start = triangle[i];
@@ -47,7 +47,12 @@ export function circleTriangleCollision(
     let closestX = start.x + dot * dx;
     let closestY = start.y + dot * dy;
 
-    if (!isPointOnLineSegment(closestX, closestY, start, end)) {
+    if (
+      !isPointOnLineSegment({
+        point: { x: closestX, y: closestY },
+        line: { start, end },
+      })
+    ) {
       closestX = closestX < start.x ? start.x : end.x;
       closestY = closestY < start.y ? start.y : end.y;
     }
@@ -64,4 +69,4 @@ export function circleTriangleCollision(
 
   // No collision
   return false;
-}
+};

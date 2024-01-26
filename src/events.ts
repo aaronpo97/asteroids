@@ -1,13 +1,16 @@
 import GameState from './classes/GameState';
 import Player from './classes/Player';
 import Projectile from './classes/Projectile';
+
 import { PROJECTILE_SPEED } from './constants';
+
 import { Vector } from './types';
 
 interface HandleKeyDownArgs {
   event: KeyboardEvent;
   state: GameState;
   player: Player;
+
   c: CanvasRenderingContext2D;
 }
 
@@ -25,6 +28,7 @@ export const handleKeyDown = ({ event, state, player, c }: HandleKeyDownArgs) =>
       state.keys.d.pressed = true;
       break;
     }
+
     case 'Space': {
       const position: Vector = {
         x: player.position.x + Math.cos(player.rotation) * 30,
@@ -60,6 +64,7 @@ export const handleKeyUp = ({ event, state }: HandleKeyUpArgs) => {
     case 'KeyD':
       state.keys.d.pressed = false;
       break;
+
     default:
       break;
   }

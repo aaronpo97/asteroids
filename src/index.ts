@@ -1,8 +1,10 @@
 import GameState from './classes/GameState';
 import Player from './classes/Player';
+
 import { circleTriangleCollision, circleCollision } from './collisionHelpers';
 import { ASTEROID_SPAWN_INTERVAL, SPEED, FRICTION, ROTATIONAL_SPEED } from './constants';
 import { handleKeyDown, handleKeyUp } from './events';
+
 import { spawnAsteroid } from './spawnHelpers';
 
 const canvas = document.querySelector<HTMLCanvasElement>('#game-container')!;
@@ -10,7 +12,6 @@ const c = canvas.getContext('2d')!;
 
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
-
 c.fillStyle = 'black';
 c.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -22,7 +23,7 @@ const player = new Player({
 
 const state = new GameState();
 
-const intervalId = window.setInterval(
+let intervalId = window.setInterval(
   () => spawnAsteroid({ canvas, c, state }),
   ASTEROID_SPAWN_INTERVAL,
 );
@@ -30,9 +31,29 @@ const intervalId = window.setInterval(
 function animate() {
   const animationId = window.requestAnimationFrame(animate);
 
+  if (document.visibilityState === 'hidden') {
+    window.cancelAnimationFrame(animationId);
+    window.clearInterval(intervalId);
+    return;
+  }
+
+  const score = state.getScore();
+  const lives = state.getLives();
+
   c.fillStyle = 'black';
   c.fillRect(0, 0, canvas.width, canvas.height);
+
   player.update();
+
+  c.font = 'bold 30px Courier New';
+  c.fillStyle = 'white';
+
+  // place it on the top left corner
+  c.fillText(`Score: ${score}`, 10, 40);
+
+  c.font = 'bold 30px Courier New';
+  c.fillStyle = 'white';
+  c.fillText(`Lives: ${lives}`, 10, 80);
 
   for (let i = state.projectiles.length - 1; i >= 0; i -= 1) {
     const projectile = state.projectiles[i];
@@ -58,8 +79,17 @@ function animate() {
      * interval.
      */
     if (circleTriangleCollision(asteroid, player.getVertices())) {
-      window.cancelAnimationFrame(animationId);
-      window.clearInterval(intervalId);
+      if (lives <= 0) {
+        window.cancelAnimationFrame(animationId);
+        window.clearInterval(intervalId);
+        return;
+      }
+      state.decrementLives();
+      player.position.x = canvas.width / 2;
+      player.position.y = canvas.height / 2;
+      player.velocity.x = 0;
+      player.velocity.y = 0;
+      player.rotation = 0;
     }
 
     /** If the asteroid is outside of the canvas, remove it from the state.asteroids array. */
@@ -79,10 +109,21 @@ function animate() {
       if (circleCollision(asteroid, projectile)) {
         state.removeProjectile(projectile);
         state.removeAsteroid(asteroid);
-
+        state.incrementScore();
         break;
       }
     }
+  }
+
+  // If the player goes off the screen, wrap them around to the other side.
+  if (player.position.x < 0) {
+    player.position.x = canvas.width;
+  } else if (player.position.x > canvas.width) {
+    player.position.x = 0;
+  } else if (player.position.y > canvas.height) {
+    player.position.y = 0;
+  } else if (player.position.y < 0) {
+    player.position.y = canvas.height;
   }
 
   if (state.keys.w.pressed) {
@@ -107,4 +148,16 @@ window.addEventListener('keyup', (event) => handleKeyUp({ event, state }));
 window.addEventListener('resize', () => {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
+});
+
+window.addEventListener('visibilitychange', () => {
+  if (document.visibilityState !== 'visible') {
+    return;
+  }
+
+  animate();
+  intervalId = window.setInterval(
+    () => spawnAsteroid({ canvas, c, state }),
+    ASTEROID_SPAWN_INTERVAL,
+  );
 });
