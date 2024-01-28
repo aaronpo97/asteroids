@@ -1,18 +1,20 @@
 import Asteroid from '../classes/Asteroid';
 import type GameState from '../classes/GameState';
+import { ASTEROID_RADII, ASTEROID_SIZES } from '../constants';
 import type { Vector } from '../types';
 
 interface SpawnAsteroidArgs {
   canvas: HTMLCanvasElement;
   ctx: CanvasRenderingContext2D;
   state: GameState;
+  size: (typeof ASTEROID_SIZES)[number];
 }
-export const spawnAsteroid = ({ canvas, ctx, state }: SpawnAsteroidArgs) => {
+export const spawnAsteroid = ({ canvas, ctx, state, size }: SpawnAsteroidArgs) => {
   const positions = ['left', 'bottom', 'right', 'top'] as const;
   const randomPosition = positions[Math.floor(Math.random() * positions.length)];
   const position: Vector = { x: 0, y: 0 };
   const velocity: Vector = { x: 0, y: 0 };
-  const radius = 50;
+  const radius = ASTEROID_RADII[size];
   switch (randomPosition) {
     case 'left': {
       // 0 to PI radians (0 to 180 degrees)

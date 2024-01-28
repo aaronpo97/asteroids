@@ -2,11 +2,22 @@ import GameState from './classes/GameState';
 import LivesDisplay from './classes/LivesDisplay';
 import Player from './classes/Player';
 import ScoreDisplay from './classes/ScoreDisplay';
-import { circleTriangleCollision, circleCollision } from './helpers/collisions';
-import { ASTEROID_SPAWN_INTERVAL, SPEED, FRICTION, ROTATIONAL_SPEED } from './constants';
-import { handleKeyDown, handleKeyUp } from './events';
-import { spawnAsteroid } from './helpers/spawning';
 import SoundEffects from './classes/SoundEffects';
+
+import { circleTriangleCollision, circleCollision } from './helpers/collisions';
+import { spawnAsteroid } from './helpers/spawning';
+
+import {
+  ASTEROID_SPAWN_INTERVAL,
+  SPEED,
+  FRICTION,
+  ROTATIONAL_SPEED,
+  ASTEROID_SIZES,
+  ASTEROID_SCORES,
+  ASTEROID_RADII,
+} from './constants';
+
+import { handleKeyDown, handleKeyUp } from './events';
 
 const canvas = document.querySelector<HTMLCanvasElement>('#game-container')!;
 canvas.width = window.innerWidth;
@@ -28,10 +39,11 @@ const state = new GameState();
 const scoreDisplay = new ScoreDisplay(ctx, state, { x: 10, y: 40 });
 const livesDisplay = new LivesDisplay(ctx, state, { x: 10, y: 80 });
 
-let intervalId = window.setInterval(
-  () => spawnAsteroid({ canvas, ctx, state }),
-  ASTEROID_SPAWN_INTERVAL,
-);
+const asteroidSpawnerCallback = () => {
+  const size = ASTEROID_SIZES[Math.floor(Math.random() * ASTEROID_SIZES.length)];
+  spawnAsteroid({ canvas, ctx, state, size });
+};
+let intervalId = window.setInterval(asteroidSpawnerCallback, ASTEROID_SPAWN_INTERVAL);
 
 function animate() {
   const animationId = window.requestAnimationFrame(animate);
@@ -99,11 +111,15 @@ function animate() {
       const projectile = state.projectiles[j];
       const isColliding = circleCollision(asteroid, projectile);
 
+      const size = Object.entries(ASTEROID_RADII).find(
+        ([s, radius]) => radius === asteroid.radius,
+      )![0] as (typeof ASTEROID_SIZES)[number];
+
       if (isColliding) {
         soundEffects.play('hit');
         state.removeProjectile(projectile);
         state.removeAsteroid(asteroid);
-        state.incrementScore();
+        state.incrementScore(ASTEROID_SCORES[size]);
 
         break;
       }
@@ -163,8 +179,5 @@ window.addEventListener('visibilitychange', () => {
   }
 
   animate();
-  intervalId = window.setInterval(
-    () => spawnAsteroid({ canvas, ctx: ctx, state }),
-    ASTEROID_SPAWN_INTERVAL,
-  );
+  intervalId = window.setInterval(asteroidSpawnerCallback, ASTEROID_SPAWN_INTERVAL);
 });

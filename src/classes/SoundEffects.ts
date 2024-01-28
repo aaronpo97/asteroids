@@ -35,7 +35,6 @@ export default class SoundEffects {
   play(sound: Sound) {
     const source = this.audioContext.createBufferSource();
     const gainNode = new GainNode(this.audioContext, { gain: 0.5 });
-
     source.buffer = this.soundBuffers[sound];
     source.connect(gainNode);
     gainNode.connect(this.audioContext.destination);

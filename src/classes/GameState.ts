@@ -43,8 +43,8 @@ export default class GameState {
     return this.score;
   }
 
-  incrementScore() {
-    this.score += 1;
+  incrementScore(amount: number = 1) {
+    this.score += amount;
   }
 
   getLives() {
