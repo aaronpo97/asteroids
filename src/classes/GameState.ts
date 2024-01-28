@@ -4,20 +4,15 @@ import Projectile from './Projectile';
 
 export default class GameState {
   keys: ValidKeys;
-
   projectiles: Projectile[];
-
   asteroids: Asteroid[];
-
   private score: number;
-
   private lives: number;
 
   constructor() {
     this.keys = {
       w: { pressed: false },
       a: { pressed: false },
-
       d: { pressed: false },
     };
     this.projectiles = [];
@@ -59,6 +54,7 @@ export default class GameState {
   decrementLives() {
     this.lives -= 1;
   }
+
   reset() {
     this.score = 0;
     this.asteroids = [];

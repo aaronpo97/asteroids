@@ -1,4 +1,4 @@
-import { CircularGameObject, Vector } from './types';
+import { CircularGameObject, Vector } from '../types';
 
 export const circleCollision = (circle1: CircularGameObject, circle2: CircularGameObject) => {
   const xDiff = circle2.position.x - circle1.position.x;
@@ -32,7 +32,7 @@ export const circleTriangleCollision = (
   circle: { position: Vector; radius: number },
   triangle: Vector[],
 ) => {
-  // Check if the circle is colliding with any of the triangle's edges
+  /** Check if the circle is colliding with any of the triangle's edges. */
   for (let i = 0; i < 3; i += 1) {
     const start = triangle[i];
     const end = triangle[(i + 1) % 3];
@@ -67,6 +67,5 @@ export const circleTriangleCollision = (
     }
   }
 
-  // No collision
   return false;
 };

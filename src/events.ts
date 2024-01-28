@@ -39,7 +39,7 @@ export const handleKeyDown = ({ event, state, player, c }: HandleKeyDownArgs) =>
         y: Math.sin(player.rotation) * PROJECTILE_SPEED,
       };
 
-      const projectile = new Projectile({ position, velocity, c });
+      const projectile = new Projectile({ position, velocity, ctx: c });
       state.addProjectile(projectile);
       break;
     }
