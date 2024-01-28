@@ -1,6 +1,7 @@
 import GameState from './classes/GameState';
 import Player from './classes/Player';
 import Projectile from './classes/Projectile';
+import SoundEffects from './classes/SoundEffects';
 
 import { PROJECTILE_SPEED } from './constants';
 
@@ -11,10 +12,12 @@ interface HandleKeyDownArgs {
   state: GameState;
   player: Player;
 
-  c: CanvasRenderingContext2D;
+  ctx: CanvasRenderingContext2D;
+
+  soundEffects: SoundEffects;
 }
 
-export const handleKeyDown = ({ event, state, player, c }: HandleKeyDownArgs) => {
+export const handleKeyDown = ({ event, state, player, ctx, soundEffects }: HandleKeyDownArgs) => {
   switch (event.code) {
     case 'KeyW': {
       state.keys.w.pressed = true;
@@ -39,7 +42,8 @@ export const handleKeyDown = ({ event, state, player, c }: HandleKeyDownArgs) =>
         y: Math.sin(player.rotation) * PROJECTILE_SPEED,
       };
 
-      const projectile = new Projectile({ position, velocity, ctx: c });
+      soundEffects.play('shoot');
+      const projectile = new Projectile({ position, velocity, ctx: ctx });
       state.addProjectile(projectile);
       break;
     }
@@ -51,6 +55,7 @@ export const handleKeyDown = ({ event, state, player, c }: HandleKeyDownArgs) =>
 interface HandleKeyUpArgs {
   event: KeyboardEvent;
   state: GameState;
+  soundEffects: SoundEffects;
 }
 
 export const handleKeyUp = ({ event, state }: HandleKeyUpArgs) => {
@@ -63,6 +68,7 @@ export const handleKeyUp = ({ event, state }: HandleKeyUpArgs) => {
       break;
     case 'KeyD':
       state.keys.d.pressed = false;
+
       break;
 
     default:

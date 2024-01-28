@@ -6,6 +6,7 @@ import { circleTriangleCollision, circleCollision } from './helpers/collisions';
 import { ASTEROID_SPAWN_INTERVAL, SPEED, FRICTION, ROTATIONAL_SPEED } from './constants';
 import { handleKeyDown, handleKeyUp } from './events';
 import { spawnAsteroid } from './helpers/spawning';
+import SoundEffects from './classes/SoundEffects';
 
 const canvas = document.querySelector<HTMLCanvasElement>('#game-container')!;
 canvas.width = window.innerWidth;
@@ -14,6 +15,9 @@ canvas.height = window.innerHeight;
 const ctx = canvas.getContext('2d')!;
 ctx.fillStyle = 'black';
 ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+const soundEffects = new SoundEffects(new AudioContext());
+soundEffects.load();
 
 const player = new Player({
   position: { x: canvas.width / 2, y: canvas.height / 2 },
@@ -31,7 +35,6 @@ let intervalId = window.setInterval(
 
 function animate() {
   const animationId = window.requestAnimationFrame(animate);
-
   const lives = state.getLives();
 
   ctx.fillStyle = 'black';
@@ -65,6 +68,7 @@ function animate() {
      * and clear the asteroid spawning interval.
      */
     if (circleTriangleCollision(asteroid, player.getVertices())) {
+      soundEffects.play('death');
       if (lives <= 0) {
         window.cancelAnimationFrame(animationId);
         window.clearInterval(intervalId);
@@ -96,9 +100,11 @@ function animate() {
       const isColliding = circleCollision(asteroid, projectile);
 
       if (isColliding) {
+        soundEffects.play('hit');
         state.removeProjectile(projectile);
         state.removeAsteroid(asteroid);
         state.incrementScore();
+
         break;
       }
     }
@@ -142,8 +148,10 @@ function animate() {
 
 animate();
 
-window.addEventListener('keydown', (event) => handleKeyDown({ event, state, player, c: ctx }));
-window.addEventListener('keyup', (event) => handleKeyUp({ event, state }));
+window.addEventListener('keydown', (event) =>
+  handleKeyDown({ event, state, player, ctx, soundEffects }),
+);
+window.addEventListener('keyup', (event) => handleKeyUp({ event, state, soundEffects }));
 window.addEventListener('resize', () => {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
