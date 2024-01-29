@@ -15,7 +15,8 @@ export default class ScoreDisplay implements GameStateObject {
   }
 
   draw() {
-    this.ctx.font = 'bold 30px Courier New';
+    this.ctx.font = 'bold 30px IBM Plex Mono';
+    this.ctx.textAlign = 'left';
     this.ctx.fillStyle = 'white';
     this.ctx.fillText(`Score: ${this.state.getScore()}`, this.position.x, this.position.y);
   }

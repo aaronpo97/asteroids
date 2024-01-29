@@ -18,6 +18,7 @@ import {
 } from './constants';
 
 import { handleKeyDown, handleKeyUp } from './events';
+import InstructionsDisplay from './classes/InstructionsDisplay';
 
 const canvas = document.querySelector<HTMLCanvasElement>('#game-container')!;
 canvas.width = window.innerWidth;
@@ -38,6 +39,10 @@ const player = new Player({
 const state = new GameState();
 const scoreDisplay = new ScoreDisplay(ctx, state, { x: 10, y: 40 });
 const livesDisplay = new LivesDisplay(ctx, state, { x: 10, y: 80 });
+const instructionsDisplay = new InstructionsDisplay(ctx, {
+  x: canvas.width / 2,
+  y: canvas.height - 10,
+});
 
 const asteroidSpawnerCallback = () => {
   const size = ASTEROID_SIZES[Math.floor(Math.random() * ASTEROID_SIZES.length)];
@@ -55,6 +60,7 @@ function animate() {
   player.update();
   scoreDisplay.update();
   livesDisplay.update();
+  instructionsDisplay.update();
 
   for (let i = state.projectiles.length - 1; i >= 0; i -= 1) {
     const projectile = state.projectiles[i];

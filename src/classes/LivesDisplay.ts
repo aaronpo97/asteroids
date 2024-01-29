@@ -13,7 +13,8 @@ export default class LivesDisplay implements GameStateObject {
   }
 
   draw() {
-    this.ctx.font = 'bold 30px Courier New';
+    this.ctx.font = 'bold 30px IBM Plex Mono';
+    this.ctx.textAlign = 'left';
     this.ctx.fillStyle = 'white';
     this.ctx.fillText(`Lives: ${this.state.getLives()}`, this.position.x, this.position.y);
   }
