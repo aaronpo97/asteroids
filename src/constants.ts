@@ -1,5 +1,5 @@
-export const SPEED = 3;
-export const ROTATIONAL_SPEED = 0.06;
+export const SPEED = 2.5;
+export const ROTATIONAL_SPEED = 0.02;
 export const FRICTION = 0.99;
 export const PROJECTILE_SPEED = 10;
 export const ASTEROID_SPAWN_INTERVAL = 3000;
